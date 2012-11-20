@@ -745,6 +745,7 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 #elif defined(__arm__)
 #define WAPI_ATOMIC_ASM
 
+
 /*
  * Atomic operations on ARM doesn't contain memory barriers, and the runtime code
  * depends on this, so we add them explicitly.

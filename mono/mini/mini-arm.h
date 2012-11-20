@@ -13,10 +13,6 @@
 #define MONO_ARCH_SOFT_FLOAT 1
 #endif
 
-#ifdef ARM_FPU_VFP_HARD
-#error "hardfp-abi not yet supported."
-#endif
-
 #if defined(__ARM_EABI__)
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
 #define ARM_ARCHITECTURE "armel"
@@ -98,6 +94,7 @@
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
 void arm_patch (guchar *code, const guchar *target);
+void arm_patch_general (MonoDomain *domain, guchar *code, const guchar *target, MonoCodeManager *dyn_code_mp);
 guint8* mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val);
 int mono_arm_is_rotated_imm8 (guint32 val, gint *rot_amount);
 
@@ -124,6 +121,9 @@ struct MonoLMF {
 	mgreg_t    sp;
 	mgreg_t    ip;
 	mgreg_t    fp;
+#if defined(MONO_ARM_FPU_VFP_HARD)
+	gdouble    fregs [MONO_SAVED_FREGS]; /* 8..15 */
+#endif
 	/* all but sp and pc: matches the PUSH instruction layout in the trampolines
 	 * 0-4 should be considered undefined (execpt in the magic tramp)
 	 * sp is saved at IP.
@@ -137,6 +137,7 @@ typedef struct MonoCompileArch {
 	gpointer seq_point_bp_method_var;
 	gboolean omit_fp, omit_fp_computed;
 	gpointer cinfo;
+	gpointer vret_addr_loc;
 } MonoCompileArch;
 
 #define MONO_ARCH_EMULATE_FCONV_TO_I8 1
@@ -185,7 +186,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 
 /* Matches the HAVE_AEABI_READ_TP define in mini-arm.c */
-#if defined(__ARM_EABI__) && defined(__linux__) && !defined(TARGET_ANDROID)
+#if defined(MONO_ARM_FPU_VFP_HARD) || defined(__ARM_EABI__) && defined(__linux__) && !defined(TARGET_ANDROID)
 #define MONO_ARCH_HAVE_TLS_GET 1
 #endif
 
@@ -215,6 +216,10 @@ mono_arm_resume_unwind (guint32 dummy1, mgreg_t pc, mgreg_t sp, mgreg_t *int_reg
 
 gboolean
 mono_arm_thumb_supported (void);
+
+gboolean
+mono_arm_hardfp_abi_supported (void);
+ 
 
 GSList*
 mono_arm_get_exception_trampolines (gboolean aot) MONO_INTERNAL;

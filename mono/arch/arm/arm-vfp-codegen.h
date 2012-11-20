@@ -160,6 +160,13 @@ enum {
 #define ARM_FSTD(p,freg,base,offset)	\
 	ARM_FSTD_COND(p,freg,base,offset,ARMCOND_AL)
 
+/* VSTM/VLDM */
+ 
+#define VSTMIA_COND(p,cond,rn,w,first_reg,nregs) ARM_EMIT((p), ((nregs * 2) << 0) | (0xb << 8) | (((first_reg) & 0xf) << 12) | ((rn) << 16) | (0 << 20) | ((w) << 21) | ((first_reg >> 4) << 22) | (1 << 23) | (0 << 24) | (0x6 << 25) | ((cond) << 28))
+#define VSTMIA(p,rn,w,first_reg,nregs) VSTMIA_COND((p), ARMCOND_AL, (rn), (w), (first_reg), (nregs))
+#define VLDMIA_COND(p,cond,rn,w,first_reg,nregs) ARM_EMIT((p), ((nregs * 2) << 0) | (0xb << 8) | (((first_reg) & 0xf) << 12) | ((rn) << 16) | (1 << 20) | ((w) << 21) | ((first_reg >> 4) << 22) | (1 << 23) | (0 << 24) | (0x6 << 25) | ((cond) << 28))
+#define VLDMIA(p,rn,w,first_reg,nregs) VLDMIA_COND((p), ARMCOND_AL, (rn), (w), (first_reg), (nregs))
+
 #define ARM_FLDMD_COND(p,first_reg,nregs,base,cond)							\
 	ARM_EMIT((p), ARM_DEF_VFP_LSF((cond),ARM_VFP_COPROC_DOUBLE,0,ARMOP_LDR,0,(base),(first_reg),((nregs) * 2) << 2))
 
