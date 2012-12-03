@@ -201,7 +201,7 @@ mono_arch_fregname (int reg)
 }
 
 static guint8*
- 
+/*
 mono_arm_emit_tls_get (guint8* code, int dreg, int tls_offset)
 {
 	int imm8, rot_amount;
@@ -217,7 +217,7 @@ mono_arm_emit_tls_get (guint8* code, int dreg, int tls_offset)
  	ARM_LDR_IMM (code, dreg, dreg, tls_offset * 4);
  	return code;
  }
-
+*/
 #ifndef DISABLE_JIT
 
 static guint8*
@@ -595,7 +595,7 @@ mono_arch_cpu_init (void)
 		i8_align = __alignof__ (gint64);
 #endif
 
-if defined(ARM_FPU_VFP_HARD)
+#if defined(ARM_FPU_VFP_HARD)
 	// TODO : use another temp register or save it, s16-31 should be preserved according to ARM ABI
 	vfp_tmp_reg = ARM_VFP_F30;
  	hardfp_abi = TRUE;
@@ -967,12 +967,12 @@ typedef struct {
 #define PARAM_REGS 4
 
 static void inline
-add_vfp (guint *vfpr, int *single_hole, guint *stack_size, ArgInfo *ainfo, gboolean is_double)
+add_vfp (guint *vfpr, guint *single_hole, guint *stack_size, ArgInfo *ainfo, gboolean is_double)
 {
   if (*vfpr < ARM_VFP_F16 || ((! is_double) && (*single_hole >= 0))) {
     ainfo->storage = RegTypeFP;
 
-    if (is_double && ((*vfpr) & 1 != 0)) {
+    if (is_double && ((*vfpr) & 1 != 0))) {
       *single_hole = *vfpr;
       (*vfpr) += 1;
     }
@@ -2147,7 +2147,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			}
 			break;
 		case RegTypeFP: {
-			intdreg = mono_alloc_freg (cfg);
+			int dreg = mono_alloc_freg (cfg);
 			if (ainfo->size == 4) {
 				/*
 				* The local register allocator can't handle single precision fp-regs,
