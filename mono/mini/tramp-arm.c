@@ -130,6 +130,8 @@ emit_bx (guint8* code, int reg)
 	return code;
 }
 
+#define N_VFP_ARGREGS 16
+
 /* Stack size for trampoline function 
  */
 #define STACK ((ALIGN_TO (sizeof (MonoLMF), 8)) + (N_VFP_ARGREGS * 8))
