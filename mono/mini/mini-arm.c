@@ -954,7 +954,7 @@ add_vfp (guint *vfpr, guint *single_hole, guint *stack_size, ArgInfo *ainfo, gbo
   if (*vfpr < ARM_VFP_F16 || ((! is_double) && (*single_hole >= 0))) {
     ainfo->storage = RegTypeFP;
 
-    if (is_double && ((*vfpr) & 1 != 0))) {
+    if (is_double && ((*vfpr & 1) != 0)) {
       *single_hole = *vfpr;
       (*vfpr) += 1;
     }
